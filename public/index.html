@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ST4R Browser</title>
+
+<style>
+:root {
+  --accent: #62e68e;
+  --background: #07110b;
+  --panel: #101c14;
+  --border: rgba(160,230,180,.15);
+  --text: #edf8ef;
+  --muted: #91a697;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--background);
+  font-family: Inter, Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* TOP BAR */
+
+.topbar {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border);
+  background: #09150d;
+}
+
+.brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 850;
+  letter-spacing: 2px;
+}
+
+.logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #153321;
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+}
+
+.status {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* TABS */
+
+.tabbar {
+  height: 43px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: #0b170f;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab {
+  height: 32px;
+  min-width: 130px;
+  max-width: 220px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #101c14;
+  border: 1px solid transparent;
+  border-radius: 8px 8px 0 0;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.tab.active {
+  background: #17251b;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.tabname {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.close {
+  border: 0;
+  background: none;
+  padding: 2px;
+  color: var(--muted);
+}
+
+.newtab {
+  min-width: 34px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* TOOLBAR */
+
+.toolbar {
+  height: 58px;
+  padding: 8px 14px;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  background: #0d1911;
+  border-bottom: 1px solid var(--border);
+}
+
+.iconbtn {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  color: var(--text);
+  background: transparent;
+  font-size: 17px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.iconbtn:hover {
+  background: #1c3022;
+  border-color: var(--border);
+}
+
+.address {
+  height: 38px;
+  flex: 1;
+  min-width: 50px;
+  padding: 0 15px;
+  border-radius: 30px;
+  background: #15241a;
+  border: 1px solid var(--border);
+  color: white;
+  outline: none;
+  font-size: 13px;
+}
+
+.address:focus {
+  border-color: var(--accent);
+}
+
+.go {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 20px;
+  border: none;
+  background: var(--accent);
+  color: #06130a;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* CONTENT */
+
+.content {
+  height: calc(100vh - 159px);
+  position: relative;
+  background: #050907;
+}
+
+.browser-frame {
+  height: 100%;
+  width: 100%;
+  border: 0;
+  display: block;
+  background: white;
+}
+
+.home {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  background:
+    radial-gradient(circle at 50% 35%,#193c25 0,transparent 45%),
+    #07110b;
+}
+
+.home-inner {
+  width: 100%;
+  max-width: 720px;
+  text-align: center;
+}
+
+.home-logo {
+  width: 70px;
+  height: 70px;
+  background: #183b25;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  font-size: 43px;
+  margin: 0 auto 20px;
+}
+
+.home h1 {
+  font-size: 43px;
+  margin: 0;
+}
+
+.home p {
+  color: var(--muted);
+}
+
+.searchbox {
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  background: #14251a;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  margin: 30px 0;
+}
+
+.searchbox input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  color: white;
+  border: 0;
+  outline: 0;
+  padding: 12px;
+}
+
+.searchbox button {
+  background: var(--accent);
+  border: 0;
+  border-radius: 12px;
+  padding: 0 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.shortcut {
+  width: 95px;
+  padding: 15px 8px;
+  border-radius: 13px;
+  background: #122017;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: white;
+}
+
+.shortcut:hover {
+  border-color: var(--accent);
+}
+
+.shortcut-icon {
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.loading {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 15px;
+  border-radius: 20px;
+  background: #14251a;
+  color: var(--accent);
+  font-size: 12px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.bottom {
+  height: 30px;
+  background: #09150d;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+@media(max-width:650px) {
+  .brand {font-size:16px}
+  .status {display:none}
+  .toolbar {padding:7px}
+  .iconbtn {width:30px}
+  .go {padding:0 11px}
+  .home h1 {font-size:33px}
+  .shortcut {width:80px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">✦</div>
+    ST4R
+  </div>
+
+  <div class="status" id="connectionStatus">
+    ST4R Browser Ready
+  </div>
+</header>
+
+<div class="tabbar" id="tabbar"></div>
+
+<div class="toolbar">
+
+  <button class="iconbtn" onclick="goBack()" title="Back">←</button>
+  <button class="iconbtn" onclick="goForward()" title="Forward">→</button>
+  <button class="iconbtn" onclick="reloadPage()" title="Reload">↻</button>
+  <button class="iconbtn" onclick="homePage()" title="Home">⌂</button>
+
+  <input
+    id="address"
+    class="address"
+    placeholder="Search Brave or enter a website address..."
+    autocomplete="off"
+    onkeydown="if(event.key==='Enter')navigate()">
+
+  <button class="go" onclick="navigate()">Go</button>
+
+  <button class="iconbtn" onclick="openExternal()" title="Open separately">↗</button>
+  <button class="iconbtn" onclick="fullscreen()" title="Fullscreen">⛶</button>
+
+</div>
+
+<div class="content" id="content">
+
+  <div class="loading" id="loading" hidden>
+    Loading website...
+  </div>
+
+</div>
+
+<footer class="bottom">
+  <span>ST4R Browser</span>
+  <span>Brave Search</span>
+</footer>
+
+
+<script>
+
+/* ==================================
+   BROWSER STATE
+================================== */
+
+let tabs = [];
+let activeTab = null;
+let nextId = 1;
+
+const content = document.getElementById('content');
+const tabbar = document.getElementById('tabbar');
+const address = document.getElementById('address');
+const loading = document.getElementById('loading');
+
+const BRAVE = 'https://search.brave.com/search?q=';
+
+
+/* ==================================
+   CREATE NEW TAB
+================================== */
+
+function newTab(url='') {
+
+  const id = nextId++;
+
+  const frame = document.createElement('iframe');
+
+  frame.className = 'browser-frame';
+  frame.style.display = 'none';
+
+  frame.allow =
+    'fullscreen; autoplay; clipboard-read; clipboard-write; gamepad';
+
+  frame.title = 'ST4R Website Viewer';
+
+  const home = document.createElement('div');
+
+  home.className = 'home';
+
+  home.innerHTML = `
+    <div class="home-inner">
+
+      <div class="home-logo">✦</div>
+
+      <h1>ST4R</h1>
+
+      <p>Your space on the web.</p>
+
+      <div class="searchbox">
+
+        <input
+          id="homeSearch${id}"
+          placeholder="Search with Brave..."
+          onkeydown="if(event.key==='Enter')searchHome(${id})">
+
+        <button onclick="searchHome(${id})">
+          Search
+        </button>
+
+      </div>
+
+      <div class="shortcuts">
+
+        <div class="shortcut" onclick="quickOpen(${id},'https://example.com')">
+          <div class="shortcut-icon">🌐</div>
+          Example
+        </div>
+
+        <div class="shortcut" onclick="quickOpen(${id},'https://wikipedia.org')">
+          <div class="shortcut-icon">📚</div>
+          Wikipedia
+        </div>
+
+        <div class="shortcut" onclick="quickOpen(${id},'https://youtube.com')">
+          <div class="shortcut-icon">▶</div>
+          YouTube
+        </div>
+
+        <div class="shortcut" onclick="searchHome(${id},'Galaxy Games')">
+          <div class="shortcut-icon">🎮</div>
+          Games
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  content.appendChild(home);
+  content.appendChild(frame);
+
+  const tab = {
+    id,
+    title: 'New Tab',
+    url: '',
+    frame,
+    home,
+    history: [],
+    historyIndex: -1
+  };
+
+  tabs.push(tab);
+
+  frame.addEventListener('load', () => {
+
+    if (activeTab === tab.id) {
+
+      loading.hidden = true;
+
+      document.getElementById('connectionStatus').textContent =
+        'Website loaded';
+
+    }
+
+  });
+
+  renderTabs();
+
+  activateTab(id);
+
+  if (url) {
+    navigateTo(url);
+  }
+
+  return id;
+}
+
+
+/* ==================================
+   DISPLAY TABS
+================================== */
+
+function renderTabs() {
+
+  tabbar.innerHTML = '';
+
+  tabs.forEach(tab => {
+
+    const button = document.createElement('div');
+
+    button.className =
+      'tab' + (tab.id === activeTab ? ' active' : '');
+
+    const name = document.createElement('span');
+
+    name.className = 'tabname';
+    name.textContent = tab.title;
+
+    const close = document.createElement('button');
+
+    close.className = 'close';
+    close.textContent = '×';
+
+    close.onclick = event => {
+      event.stopPropagation();
+      closeTab(tab.id);
+    };
+
+    button.appendChild(name);
+    button.appendChild(close);
+
+    button.onclick = () => activateTab(tab.id);
+
+    tabbar.appendChild(button);
+
+  });
+
+  const add = document.createElement('button');
+
+  add.className = 'newtab';
+  add.textContent = '+';
+  add.title = 'New tab';
+  add.onclick = () => newTab();
+
+  tabbar.appendChild(add);
+
+}
+
+function activateTab(id) {
+
+  activeTab = id;
+
+  tabs.forEach(tab => {
+
+    const active = tab.id === id;
+
+    tab.frame.style.display = active ? 'block' : 'none';
+    tab.home.style.display =
+      active && !tab.url ? 'flex' : 'none';
+
+  });
+
+  const tab = getActiveTab();
+
+  if (!tab) return;
+
+  address.value = tab.url;
+
+  loading.hidden = true;
+
+  renderTabs();
+
+}
+
+function closeTab(id) {
+
+  const index = tabs.findIndex(t => t.id === id);
+
+  if (index === -1) return;
+
+  const tab = tabs[index];
+
+  tab.frame.remove();
+  tab.home.remove();
+
+  tabs.splice(index,1);
+
+  if (!tabs.length) {
+    newTab();
+    return;
+  }
+
+  if (activeTab === id) {
+
+    const next = tabs[Math.max(0,index-1)];
+
+    activateTab(next.id);
+
+  } else {
+
+    renderTabs();
+
+  }
+
+}
+
+function getActiveTab() {
+  return tabs.find(tab => tab.id === activeTab);
+}
+
+
+/* ==================================
+   ADDRESS BAR
+================================== */
+
+function resolveAddress(value) {
+
+  value = String(value || '').trim();
+
+  if (!value) return '';
+
+  if (value === 'about:blank') return value;
+
+  if (/^https?:\/\//i.test(value)) {
+
+    return value;
+
+  }
+
+  const looksLikeDomain =
+    /^[a-z0-9.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(value);
+
+  if (looksLikeDomain && !value.includes(' ')) {
+
+    return 'https://' + value;
+
+  }
+
+  return BRAVE + encodeURIComponent(value);
+
+}
+
+function navigate() {
+
+  const value = address.value.trim();
+
+  if (!value) return;
+
+  navigateTo(resolveAddress(value));
+
+}
+
+function navigateTo(url,saveHistory=true) {
+
+  const tab = getActiveTab();
+
+  if (!tab || !url) return;
+
+  tab.url = url;
+
+  if (saveHistory) {
+
+    tab.history =
+      tab.history.slice(0,tab.historyIndex+1);
+
+    tab.history.push(url);
+
+    tab.historyIndex++;
+
+  }
+
+  const host = (() => {
+    try {
+      return new URL(url).hostname;
+    } catch(e) {
+      return 'New Tab';
+    }
+  })();
+
+  tab.title =
+    host === 'about:blank' ? 'New Tab' : host;
+
+  tab.home.style.display = 'none';
+  tab.frame.style.display = 'block';
+
+  address.value = url;
+
+  loading.hidden = false;
+
+  document.getElementById('connectionStatus').textContent =
+    'Loading ' + host;
+
+  tab.frame.src = url;
+
+  renderTabs();
+
+}
+
+
+/* ==================================
+   BACK / FORWARD
+================================== */
+
+function goBack() {
+
+  const tab = getActiveTab();
+
+  if (!tab) return;
+
+  if (tab.historyIndex > 0) {
+
+    tab.historyIndex--;
+
+    const previous = tab.history[tab.historyIndex];
+
+    navigateTo(previous,false);
+
+  } else {
+
+    try {
+      tab.frame.contentWindow.history.back();
+    } catch(e) {}
+
+  }
+
+}
+
+function goForward() {
+
+  const tab = getActiveTab();
+
+  if (!tab) return;
+
+  if (tab.historyIndex < tab.history.length-1) {
+
+    tab.historyIndex++;
+
+    const next = tab.history[tab.historyIndex];
+
+    navigateTo(next,false);
+
+  } else {
+
+    try {
+      tab.frame.contentWindow.history.forward();
+    } catch(e) {}
+
+  }
+
+}
+
+
+/* ==================================
+   RELOAD / HOME
+================================== */
+
+function reloadPage() {
+
+  const tab = getActiveTab();
+
+  if (!tab) return;
+
+  if (tab.url) {
+
+    loading.hidden = false;
+
+    try {
+      tab.frame.contentWindow.location.reload();
+    } catch(e) {
+      tab.frame.src = tab.url;
+    }
+
+  }
+
+}
+
+function homePage() {
+
+  const tab = getActiveTab();
+
+  if (!tab) return;
+
+  tab.url = '';
+  tab.title = 'New Tab';
+
+  tab.history = [];
+  tab.historyIndex = -1;
+
+  tab.frame.src = 'about:blank';
+  tab.frame.style.display = 'none';
+
+  tab.home.style.display = 'flex';
+
+  address.value = '';
+
+  loading.hidden = true;
+
+  renderTabs();
+
+}
+
+
+/* ==================================
+   BRAVE SEARCH
+================================== */
+
+function searchHome(id,query) {
+
+  const input =
+    document.getElementById('homeSearch'+id);
+
+  const value =
+    query || input?.value || '';
+
+  if (!value.trim()) return;
+
+  if (activeTab !== id) {
+    activateTab(id);
+  }
+
+  navigateTo(
+    BRAVE + encodeURIComponent(value.trim())
+  );
+
+}
+
+
+/* ==================================
+   QUICK SHORTCUTS
+================================== */
+
+function quickOpen(id,url) {
+
+  if (activeTab !== id) {
+    activateTab(id);
+  }
+
+  navigateTo(url);
+
+}
+
+
+/* ==================================
+   OPEN OUTSIDE / FULLSCREEN
+================================== */
+
+function openExternal() {
+
+  const tab = getActiveTab();
+
+  if (!tab || !tab.url) return;
+
+  window.open(
+    tab.url,
+    '_blank',
+    'noopener,noreferrer'
+  );
+
+}
+
+function fullscreen() {
+
+  const tab = getActiveTab();
+
+  if (!tab) return;
+
+  if (tab.frame.requestFullscreen) {
+
+    tab.frame.requestFullscreen();
+
+  }
+
+}
+
+
+/* ==================================
+   STARTUP
+================================== */
+
+newTab();
+
+</script>
+
+</body>
+</html>
